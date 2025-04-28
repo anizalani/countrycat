@@ -1,0 +1,220 @@
+version: "3.8"
+
+services:
+
+  plex:
+    image: ghcr.io/binhex/arch-plex
+    ports:
+      - "32400:32400"
+    volumes:
+      - type: bind
+        source: /mnt/unraid/media
+        target: /data
+      - type: bind
+        source: /mnt/unraid/media/movies
+        target: /movies
+      - type: bind
+        source: /mnt/unraid/media/tv
+        target: /tv
+      - type: bind
+        source: /mnt/unraid/media/tv4k
+        target: /tv4k
+      - type: bind
+        source: /opt/mediastack/appdata/plex
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == i38100
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:32400/web/index.html"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+
+  jellyfin:
+    image: ghcr.io/binhex/arch-jellyfin
+    ports:
+      - "8096:8096"
+    volumes:
+      - type: bind
+        source: /mnt/unraid/media
+        target: /data
+      - type: bind
+        source: /mnt/unraid/aniz
+        target: /aniz
+      - type: bind
+        source: /opt/mediastack/appdata/jellyfin
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == i38100
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+
+  radarr:
+    image: ghcr.io/binhex/arch-radarr
+    ports:
+      - "7878:7878"
+    volumes:
+      - type: bind
+        source: /mnt/unraid/downloads
+        target: /downloads
+      - type: bind
+        source: /mnt/unraid/incomplete
+        target: /incomplete
+      - type: bind
+        source: /mnt/unraid/media/movies
+        target: /movies
+      - type: bind
+        source: /opt/mediastack/appdata/radarr
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
+
+  sonarr-hd:
+    image: ghcr.io/binhex/arch-sonarr
+    ports:
+      - "8989:8989"
+    volumes:
+      - type: bind
+        source: /mnt/unraid/downloads
+        target: /downloads
+      - type: bind
+        source: /mnt/unraid/incomplete
+        target: /incomplete
+      - type: bind
+        source: /mnt/unraid/media/tv
+        target: /tv
+      - type: bind
+        source: /opt/mediastack/appdata/sonarr-hd
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
+
+  sonarr-4k:
+    image: ghcr.io/binhex/arch-sonarr
+    ports:
+      - "8990:8989"
+    volumes:
+      - type: bind
+        source: /mnt/unraid/downloads
+        target: /downloads
+      - type: bind
+        source: /mnt/unraid/incomplete
+        target: /incomplete
+      - type: bind
+        source: /mnt/unraid/media/tv4k
+        target: /tv4k
+      - type: bind
+        source: /opt/mediastack/appdata/sonarr-4k
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
+
+  whisparr:
+    image: ghcr.io/hotio/whisparr
+    ports:
+      - "6969:6969"
+    volumes:
+      - type: bind
+        source: /mnt/unraid/downloads
+        target: /downloads
+      - type: bind
+        source: /mnt/unraid/incomplete
+        target: /incomplete
+      - type: bind
+        source: /mnt/unraid/aniz
+        target: /aniz
+      - type: bind
+        source: /opt/mediastack/appdata/whisparr
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
+
+  prowlarr:
+    image: ghcr.io/binhex/arch-prowlarr
+    ports:
+      - "9696:9696"
+    volumes:
+      - type: bind
+        source: /opt/mediastack/appdata/prowlarr
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
+
+  sabnzbd:
+    image: ghcr.io/binhex/arch-sabnzbd
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: /mnt/unraid/downloads
+        target: /downloads
+      - type: bind
+        source: /mnt/unraid/incomplete
+        target: /incomplete
+      - type: bind
+        source: /mnt/unraid/media/movies
+        target: /movies
+      - type: bind
+        source: /mnt/unraid/media/tv
+        target: /tv
+      - type: bind
+        source: /mnt/unraid/media/tv4k
+        target: /tv4k
+      - type: bind
+        source: /mnt/unraid/aniz
+        target: /aniz
+      - type: bind
+        source: /opt/mediastack/appdata/sabnzbd
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == i38100
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+
+  uptime-kuma-oracle:
+    image: louislam/uptime-kuma:1
+    ports:
+      - "3001:3001"
+    volumes:
+      - type: bind
+        source: /opt/mediastack/appdata/uptime-kuma-oracle
+        target: /app/data
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
+
+  uptime-kuma-i38100:
+    image: louislam/uptime-kuma:1
+    ports:
+      - "3002:3001"
+    volumes:
+      - type: bind
+        source: /opt/mediastack/appdata/uptime-kuma-i38100
+        target: /app/data
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == i38100
