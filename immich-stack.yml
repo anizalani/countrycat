@@ -1,0 +1,94 @@
+version: "3.8"
+
+services:
+
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:release
+    ports:
+      - "2283:2283"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=immich-postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE_NAME=immich
+      - REDIS_HOST=immich-redis
+      - IMMICH_SERVER_URL=http://immich-server:2283
+      - TZ=America/Chicago
+    volumes:
+      - type: bind
+        source: /mnt/unraid/photos
+        target: /usr/src/app/upload
+      - type: bind
+        source: /opt/mediastack/appdata/immich-server
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
+    depends_on:
+      - immich-postgres
+      - immich-redis
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:release
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=immich-postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE_NAME=immich
+      - REDIS_HOST=immich-redis
+      - IMMICH_SERVER_URL=http://immich-server:2283
+      - TZ=America/Chicago
+    volumes:
+      - type: bind
+        source: /mnt/unraid/photos
+        target: /usr/src/app/upload
+      - type: bind
+        source: /opt/mediastack/appdata/immich-ml
+        target: /config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == i38100
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    depends_on:
+      - immich-server
+      - immich-redis
+
+  immich-redis:
+    image: redis:6.2
+    volumes:
+      - type: volume
+        source: immich-redis-data
+        target: /data
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
+
+  immich-postgres:
+    image: tensorchord/pgvecto-rs:pg14-v0.2.0
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=immich
+    volumes:
+      - type: volume
+        source: immich-pg-data
+        target: /var/lib/postgresql/data
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
+
+volumes:
+  immich-redis-data:
+  immich-pg-data:
