@@ -1,5 +1,3 @@
-# Mount SMB shares from Unraid to i38100 (Windows 11)
-
 $SMBServer = "unraid"   # <-- Unraid Tailscale IP
 $Username = "windows11" # <-- SMB username
 $Password = "Czech1701!" # <-- SMB password
@@ -24,9 +22,6 @@ $shares = @(
     @{ DriveLetter = "S"; Path = "\\$SMBServer\steam" },
     @{ DriveLetter = "T"; Path = "\\$SMBServer\tv" },
     @{ DriveLetter = "E"; Path = "\\$SMBServer\tv4k" }
-)
-
-
 )
 
 foreach ($share in $shares) {
