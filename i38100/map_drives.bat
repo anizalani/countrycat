@@ -1,0 +1,19 @@
+net use Z: \\unraid\3dprinting /user:aniz Czech1701! /persistent:yes
+net use A: \\unraid\aniz /user:aniz Czech1701! /persistent:yes
+net use X: \\unraid\appdatabackup /user:aniz Czech1701! /persistent:yes
+net use B: \\unraid\backup /user:aniz Czech1701! /persistent:yes
+net use Y: \\unraid\books /user:aniz Czech1701! /persistent:yes
+net use V: \\unraid\downloads /user:aniz Czech1701! /persistent:yes
+net use F: \\unraid\flynn /user:aniz Czech1701! /persistent:yes
+net use G: \\unraid\guacamole /user:aniz Czech1701! /persistent:yes
+net use U: \\unraid\incomplete /user:aniz Czech1701! /persistent:yes
+net use I: \\unraid\isla /user:aniz Czech1701! /persistent:yes
+net use W: "\\unraid\MacBook Pro Time Machine" /user:aniz Czech1701! /persistent:yes
+net use M: \\unraid\media /user:aniz Czech1701! /persistent:yes
+net use R: \\unraid\movies /user:aniz Czech1701! /persistent:yes
+net use L: \\unraid\music /user:aniz Czech1701! /persistent:yes
+net use P: \\unraid\nextcloud /user:aniz Czech1701! /persistent:yes
+net use N: \\unraid\nicole /user:aniz Czech1701! /persistent:yes
+net use S: \\unraid\steam /user:aniz Czech1701! /persistent:yes
+net use T: \\unraid\tv /user:aniz Czech1701! /persistent:yes
+net use E: \\unraid\tv4k /user:aniz Czech1701! /persistent:yes
