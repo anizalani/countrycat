@@ -193,29 +193,28 @@ services:
       timeout: 10s
       retries: 3
 
-uptime-kuma-oracle:
-  image: louislam/uptime-kuma:1
-  ports:
-    - "3003:3001"  # External 3003 -> Internal 3001
-  volumes:
-    - type: bind
-      source: /opt/mediastack/appdata/uptime-kuma-oracle
-      target: /app/data
-  deploy:
-    placement:
-      constraints:
-        - node.labels.name == oracle-prime
+  uptime-kuma-oracle:
+    image: louislam/uptime-kuma:1
+    ports:
+      - "3003:3001"
+    volumes:
+      - type: bind
+        source: /opt/mediastack/appdata/uptime-kuma-oracle
+        target: /app/data
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == oracle-prime
 
-uptime-kuma-i38100:
-  image: louislam/uptime-kuma:1
-  ports:
-    - "3004:3001"  # External 3004 -> Internal 3001
-  volumes:
-    - type: bind
-      source: /opt/mediastack/appdata/uptime-kuma-i38100
-      target: /app/data
-  deploy:
-    placement:
-      constraints:
-        - node.labels.name == i38100
-
+  uptime-kuma-i38100:
+    image: louislam/uptime-kuma:1
+    ports:
+      - "3004:3001"
+    volumes:
+      - type: bind
+        source: /opt/mediastack/appdata/uptime-kuma-i38100
+        target: /app/data
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == i38100
