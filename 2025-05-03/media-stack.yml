@@ -1,0 +1,94 @@
+version: "3.8"
+
+services:
+
+  plex:
+    image: ghcr.io/binhex/arch-plex
+    ports:
+      - "32400:32400"
+    volumes:
+      - /mnt/user/tv:/tv
+      - /mnt/user/tv4k:/tv4k
+      - /mnt/user/YouTube:/YouTube
+      - /mnt/user/movies:/movies
+      - /mnt/user/backup/appdata/binhex-plex:/config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == Tower
+
+  jellyfin:
+    image: ghcr.io/binhex/arch-jellyfin
+    ports:
+      - "8096:8096"
+    volumes:
+      - /mnt/user/aniz/Backup/nymph:/media
+      - /mnt/user/appdata/binhex-jellyfin:/config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == Tower
+
+  radarr:
+    image: ghcr.io/binhex/arch-radarr
+    ports:
+      - "7878:7878"
+    volumes:
+      - /mnt/user/backup/appdata/binhex-radarr:/config
+      - /mnt/user/downloads:/downloads
+      - /mnt/user/incomplete:/incomplete
+      - /mnt/user/movies:/media
+
+
+  radarr4k:
+    image: ghcr.io/binhex/arch-radarr
+    ports:
+      - "17878:7878"
+    volumes:
+      - /mnt/user/backup/appdata/binhex-radarr4k:/config
+      - /mnt/user/downloads:/downloads
+      - /mnt/user/incomplete:/incomplete
+      - /mnt/user/movies:/media
+
+  sonarr:
+    image: ghcr.io/binhex/arch-sonarr
+    ports:
+      - "8989:8989"
+    volumes:
+      - /mnt/user/backup/appdata/binhex-sonarr:/config
+      - /mnt/user/downloads:/downloads
+      - /mnt/user/incomplete:/incomplete
+      - /mnt/user/tv:/series
+      - /mnt/user/tv4k:/tv4k:rw
+
+  whisparr:
+    image: ghcr.io/hotio/whisparr
+    ports:
+      - "6969:6969"
+    volumes:
+      - /mnt/user/backup/appdata/whisparr:/config
+      - /mnt/user/downloads:/downloads
+      - /mnt/user/incomplete:/incomplete
+      - /mnt/user/aniz/Backup/nymph:/media
+
+
+  prowlarr:
+    image: ghcr.io/binhex/arch-prowlarr
+    ports:
+      - "9696:9696"
+    volumes:
+      - /mnt/user/backup/appdata/binhex-prowlarr:/config
+
+
+  sabnzbd:
+    image: ghcr.io/binhex/arch-sabnzbd
+    ports:
+      - "8080:8080"
+    volumes:
+      - /mnt/user/appdata/binhex-sabnzbd:/config
+      - /mnt/user/downloads:/downloads
+      - /mnt/user/incomplete:/incomplete
+    deploy:
+      placement:
+        constraints:
+          - node.labels.name == Tower
