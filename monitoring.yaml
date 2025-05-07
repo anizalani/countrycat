@@ -1,0 +1,179 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - /mnt/user/freshdata/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /mnt/user/freshdata/monitoring/prometheus/data:/prometheus
+    ports:
+      - target: 9090
+        published: 9090
+        protocol: tcp
+        mode: host
+    networks:
+      - immich
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+  grafana:
+    image: ghcr.io/anizalani/grafana-ts:latest
+    hostname: grafana
+    environment:
+      - TS_HOSTNAME=grafana  # This will be your Tailscale hostname
+    secrets:
+      - source: ghcr-auth
+        target: /root/.docker/config.json
+      - source: TS_AUTHKEY
+        target: TS_AUTHKEY
+    volumes:
+      # Standard Grafana data
+      - /mnt/user/freshdata/monitoring/grafana:/var/lib/grafana
+      
+      # Tailscale requirements
+      - /dev/net/tun:/dev/net/tun
+      
+      # IMPORTANT: This persistent volume for Tailscale state
+      - /mnt/user/freshdata/monitoring/tailscale/grafana:/var/lib/tailscale
+      
+    networks:
+      - immich
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - apparmor:unconfined
+
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    volumes:
+      - /mnt/user/freshdata/monitoring/uptime-kuma:/app/data
+    ports:
+      - target: 3001
+        published: 3001
+        protocol: tcp
+        mode: host
+    networks:
+      - immich
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+  speedtest-i38100:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    ports:
+      - published: 8761
+        target: 80
+        protocol: tcp
+        mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /mnt/user/freshdata/monitoring/speedtest-tracker-i38100:/config
+    networks:
+      - immich
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == i38100
+
+  speedtest-tower:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    ports:
+      - published: 8762
+        target: 80
+        protocol: tcp
+        mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /mnt/user/freshdata/monitoring/speedtest-tracker-tower:/config
+    networks:
+      - immich
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == Tower
+
+  speedtest-oracle:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    ports:
+      - published: 8763
+        target: 80
+        protocol: tcp
+        mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /mnt/user/freshdata/monitoring/speedtest-tracker-oracle:/config
+    networks:
+      - immich
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+  loki:
+    image: grafana/loki:2.9.2
+    user: "1000"
+    ports:
+      - target: 3100
+        published: 3100
+        protocol: tcp
+        mode: host
+    volumes:
+      - /mnt/user/freshdata/monitoring/loki:/loki
+      - /mnt/user/freshdata/monitoring/loki/wal:/wal
+      - /mnt/user/freshdata/monitoring/loki/compactor:/compactor   # <-- THIS LINE IS KEY
+      - /mnt/user/freshdata/monitoring/loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - immich
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+
+
+  promtail:
+    image: grafana/promtail:2.9.2
+    user: "0"
+    volumes:
+      - /var/log:/var/log
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /mnt/user/freshdata/monitoring/promtail-config.yaml:/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/config.yaml
+    networks:
+      - immich
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+networks:
+  immich:
+    external: true
+
+secrets:
+  TS_AUTHKEY:
+    external: true
+  ghcr-auth:
+    external: true
