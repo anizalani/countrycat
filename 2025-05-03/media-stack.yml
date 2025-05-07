@@ -9,7 +9,7 @@ services:
     volumes:
       - /mnt/user/tv:/tv
       - /mnt/user/tv4k:/tv4k
-      - /mnt/user/YouTube:/YouTube
+      - /mnt/user/media/YouTube:/YouTube
       - /mnt/user/movies:/movies
       - /mnt/user/freshdata/media/plex:/config
     deploy:
