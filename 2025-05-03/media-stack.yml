@@ -18,6 +18,8 @@ plex:
       - /mnt/user/media/YouTube:/YouTube
       - /mnt/user/movies:/movies
       - /mnt/user/freshdata/media/plex:/config
+    environment
+      - PLEX_CLAIM="claim-P2sXrPf-dS533Pxw92hx"
     deploy:
       placement:
         constraints:
