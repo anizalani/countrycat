@@ -6,9 +6,9 @@ services:
     restart: unless-stopped
     command: tunnel run
     environment:
-        - TUNNEL_TOKEN=eyJhIjoiMDQ1MDllY2Q0YTAyOTBhYjI1NGJkZDE2Y2E5M2QxYWQiLCJ0IjoiMzI4NjcxODYtOGM2Mi00ZDYzLTljZDItZDY2MTc0MzViMjM5IiwicyI6Ik1qRTBNRGN6TTJFdE9UQmhOaTAwWVRKbExXSmhNell0TTJNNE9UQTRZMlkwTXpRMyJ9
+      - TUNNEL_TOKEN=eyJhIjoiMDQ1MDllY2Q0YTAyOTBhYjI1NGJkZDE2Y2E5M2QxYWQiLCJ0IjoiMzI4NjcxODYtOGM2Mi00ZDYzLTljZDItZDY2MTc0MzViMjM5IiwicyI6Ik1qRTBNRGN6TTJFdE9UQmhOaTAwWVRKbExXSmhNell0TTJNNE9UQTRZMl[...]
 
-plex:
+  plex:
     image: ghcr.io/binhex/arch-plex
     ports:
       - "32400:32400"
@@ -47,7 +47,6 @@ plex:
       - /mnt/user/incomplete:/incomplete
       - /mnt/user/movies:/media
 
-
   radarr4k:
     image: ghcr.io/binhex/arch-radarr
     ports:
@@ -79,14 +78,12 @@ plex:
       - /mnt/user/incomplete:/incomplete
       - /mnt/user/aniz/Backup/nymph:/media
 
-
   prowlarr:
     image: ghcr.io/binhex/arch-prowlarr
     ports:
       - "9696:9696"
     volumes:
       - /mnt/user/freshdata/media/prowlarr:/config
-
 
   sabnzbd:
     image: ghcr.io/binhex/arch-sabnzbd
