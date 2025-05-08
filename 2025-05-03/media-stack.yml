@@ -7,7 +7,7 @@ services:
     command: tunnel run
     environment:
         - TUNNEL_TOKEN=eyJhIjoiMDQ1MDllY2Q0YTAyOTBhYjI1NGJkZDE2Y2E5M2QxYWQiLCJ0IjoiMzI4NjcxODYtOGM2Mi00ZDYzLTljZDItZDY2MTc0MzViMjM5IiwicyI6Ik1qRTBNRGN6TTJFdE9UQmhOaTAwWVRKbExXSmhNell0TTJNNE9UQTRZMlkwTXpRMyJ9
-=
+
 plex:
     image: ghcr.io/binhex/arch-plex
     ports:
