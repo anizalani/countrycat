@@ -1,0 +1,156 @@
+
+version: "3.8"
+
+services:
+  grafana:
+    build:
+      context: ./grafana-ts
+    image: ghcr.io/anizalani/grafana-ts:latest
+    hostname: grafana
+    secrets:
+      - TS_AUTHKEY
+    volumes:
+      - /mnt/user/freshdata/monitoring/grafana:/var/lib/grafana
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+  prometheus:
+    build:
+      context: ./prometheus-ts
+    image: ghcr.io/anizalani/prometheus-ts:latest
+    hostname: prometheus
+    secrets:
+      - TS_AUTHKEY
+    volumes:
+      - /mnt/user/freshdata/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /mnt/user/freshdata/monitoring/prometheus/data:/prometheus
+    ports:
+      - target: 9090
+        published: 9090
+        protocol: tcp
+        mode: host
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+  uptime-kuma:
+    build:
+      context: ./uptime-kuma-ts
+    image: ghcr.io/anizalani/uptime-kuma-ts:latest
+    hostname: uptime-kuma
+    secrets:
+      - TS_AUTHKEY
+    volumes:
+      - /mnt/user/freshdata/monitoring/uptime-kuma:/app/data
+    ports:
+      - target: 3001
+        published: 3001
+        protocol: tcp
+        mode: host
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+  speedtest-tower:
+    build:
+      context: ./speedtest-tower-ts
+    image: ghcr.io/anizalani/speedtest-tower-ts:latest
+    hostname: speedtest-tower
+    secrets:
+      - TS_AUTHKEY
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /mnt/user/freshdata/monitoring/speedtest-tracker-tower:/config
+    ports:
+      - target: 8762
+        published: 8762
+        protocol: tcp
+        mode: host
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == Tower
+
+  speedtest-oracle:
+    build:
+      context: ./speedtest-oracle-ts
+    image: ghcr.io/anizalani/speedtest-oracle-ts:latest
+    hostname: speedtest-oracle
+    secrets:
+      - TS_AUTHKEY
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /mnt/user/freshdata/monitoring/speedtest-tracker-oracle:/config
+    ports:
+      - target: 8763
+        published: 8763
+        protocol: tcp
+        mode: host
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+  speedtest-i38100:
+    build:
+      context: ./speedtest-i38100-ts
+    image: ghcr.io/anizalani/speedtest-i38100-ts:latest
+    hostname: speedtest-i38100
+    secrets:
+      - TS_AUTHKEY
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /mnt/user/freshdata/monitoring/speedtest-tracker-i38100:/config
+    ports:
+      - target: 8761
+        published: 8761
+        protocol: tcp
+        mode: host
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == i38100
+
+  loki:
+    build:
+      context: ./loki-ts
+    image: ghcr.io/anizalani/loki-ts:latest
+    hostname: loki
+    secrets:
+      - TS_AUTHKEY
+    volumes:
+      - /mnt/user/freshdata/monitoring/loki:/loki
+      - /mnt/user/freshdata/monitoring/loki/wal:/wal
+      - /mnt/user/freshdata/monitoring/loki/compactor:/compactor
+      - /mnt/user/freshdata/monitoring/loki-config.yaml:/etc/loki/local-config.yaml
+    ports:
+      - target: 3100
+        published: 3100
+        protocol: tcp
+        mode: host
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == oracle
+
+secrets:
+  TS_AUTHKEY:
+    external: true
