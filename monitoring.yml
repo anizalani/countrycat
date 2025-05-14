@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   grafana:
-    image: ghcr.io/anizalani/grafana-ts:latest
+    image: grafana/grafana:latest
     deploy:
       placement:
         constraints: [node.hostname == oracle]
@@ -13,7 +13,7 @@ services:
     restart: always
 
   prometheus:
-    image: ghcr.io/anizalani/prometheus-ts:latest
+    image: prom/prometheus:latest
     deploy:
       placement:
         constraints: [node.hostname == oracle]
@@ -24,7 +24,7 @@ services:
     restart: always
 
   uptime-kuma:
-    image: ghcr.io/anizalani/uptime-kuma-ts:latest
+    image: louislam/uptime-kuma:latest
     deploy:
       placement:
         constraints: [node.hostname == oracle]
@@ -35,7 +35,7 @@ services:
     restart: always
 
   loki:
-    image: ghcr.io/anizalani/loki-ts:latest
+    image: grafana/loki:latest
     deploy:
       placement:
         constraints: [node.hostname == oracle]
@@ -46,7 +46,7 @@ services:
     restart: always
 
   speedtest-tower:
-    image: ghcr.io/anizalani/speedtest-tower-ts:latest
+    image: ghcr.io/alexjustesen/speedtest-tracker:latest
     deploy:
       placement:
         constraints: [node.hostname == swarm-manager]
@@ -57,7 +57,7 @@ services:
     restart: always
 
   speedtest-i38100:
-    image: ghcr.io/anizalani/speedtest-i38100-ts:latest
+    image: ghcr.io/alexjustesen/speedtest-tracker:latest
     deploy:
       placement:
         constraints: [node.hostname == docker-desktop]
@@ -68,7 +68,7 @@ services:
     restart: always
 
   speedtest-oracle:
-    image: ghcr.io/anizalani/speedtest-oracle-ts:latest
+    image: ghcr.io/alexjustesen/speedtest-tracker:latest
     deploy:
       placement:
         constraints: [node.hostname == oracle]
